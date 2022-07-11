@@ -15,7 +15,7 @@ const uri = `mongodb+srv://${config.NAME}:${config.PASSWORD}@${config.HOST}`
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true,useUnifiedTopology: true}));
-app.use('/v1', userRoutes);
+app.use('/v1/users', userRoutes);
 app.use('/v1/products', productRoutes);
 
 
