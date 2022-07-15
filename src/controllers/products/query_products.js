@@ -20,7 +20,8 @@ class QueryProduct {
     async getProductById(productId) {
         const param = {
             _id: productId
-        };
+        }
+
         const {
             data,
             error
@@ -34,7 +35,8 @@ class QueryProduct {
     async getProductByName(name) {
         const param = {
             name: name
-        };
+        }
+
         const {
             data,
             error
@@ -45,54 +47,7 @@ class QueryProduct {
         return utils.wrapperData(data);
     }
 
-    async insertProduct(payload) {
-        const {
-            name,
-            price,
-            rating,
-            tag
-        } = payload;
-
-        const dataProduct = {
-            name: name,
-            price: price,
-            rating: rating,
-            tag: tag
-        }
-        const {
-            data,
-            error
-        } = await this.product.insertOneProduct(dataProduct);
-        if (error) {
-            return utils.wrapperError(error);
-        }
-        return utils.wrapperData(data);
-    }
-
-    async deleteProduct(productId) {
-        const param = {
-            _id: productId
-        }
-        const {
-            data,
-            error
-        } = await this.product.deleteOneProduct(param);
-        if (error) {
-            return utils.wrapperError(error);
-        }
-        return utils.wrapperData(data);
-    }
-
-    async deleteProducts() {
-        const {
-            data,
-            error
-        } = await this.product.deleteManyProduct();
-        if (error) {
-            return utils.wrapperError(error);
-        }
-        return utils.wrapperData(data);
-    }
+    
 }
 
 

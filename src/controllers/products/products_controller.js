@@ -12,50 +12,50 @@ const getProduct = async (req, res) => {
 }
 
 const getProductById = async (req, res) => {
-    const productId = req.params.productId;
-    const validateParam = utils.validateSchema(productId, schema.getProductSchema);
-    if (validateParam.error) return utils.responseFail(res, validateParam.error)
-    const response = await query.getProductById(productId)
+    const params = req.params.productId;
+    const validateParams = utils.validateSchema(params, schema.getProductSchema);
+    if (validateParams.error) return utils.responseFail(res, validateParams.error)
+    const response = await query.getProductById(params)
     return (response.error) ? utils.responseFail(res, response.error) : utils.responseSuccess(res, 200, 'Success Get Product', response.data);
 }
 
 const getProductByName = async (req, res) => {
-    const productName = req.params.productName;
-    const validateName = utils.validateSchema(productName, schema.getProductByNameSchema);
-    if (validateName.error) return utils.responseFail(res, validateName.error);
-    const response = await query.getProductByName(productName);
+    const params = req.params.productName;
+    const validateParams = utils.validateSchema(params, schema.getProductByNameSchema);
+    if (validateParams.error) return utils.responseFail(res, validateName.error);
+    const response = await query.getProductByName(params);
     return (response.error) ? utils.responseFail(res, response.error) : utils.responseSuccess(res, 200, 'Success Get Product', response.data);
 }
 
 const postProduct = async (req, res) => {
-    const body = req.body;
-    const validateParam = utils.validateSchema(body, schema.addProductSchema);
-    if (validateParam.error) return utils.responseFail(res, validateParam.error);
-    const response = await query.insertProduct(body);
+    const payload = req.body;
+    const validatePayload = utils.validateSchema(payload, schema.addProductSchema);
+    if (validatePayload.error) return utils.responseFail(res, validatePayload.error);
+    const response = await command.insertProduct(payload);
     return (response.error) ? utils.responseFail(res, response.error) : utils.responseSuccess(res, 201, 'Success Add Produtc', response.data)
 }
 
 const updateProduct = async (req, res) => {
     const params = req.params.productId;
-    const body = req.body;
+    const payload = req.body;
     const validateParam = utils.validateSchema(params, schema.getProductSchema);
     if (validateParam.error) return utils.responseFail(res, validateParam.error);
-    const validateBody = utils.validateSchema(body, schema.updateProductSchema);
+    const validateBody = utils.validateSchema(payload, schema.updateProductSchema);
     if (validateBody.error) return utils.responseFail(res, validateBody.error);
-    const response = await command.updateProduct(params, body);
+    const response = await command.updateProduct(params, payload);
     return (response.error) ? utils.responseFail(res, response.error) : utils.responseSuccess(res, 200, 'Success Update Product', response.data)
 }
 
 const deleteProduct = async (req, res) => {
     const params = req.params.productId
-    const validateParam = utils.validateSchema(params, schema.deleteProductSchema);
-    if (validateParam.error) return utils.responseFail(res, validateParam.error);
-    const response = await query.deleteProduct(params);
+    const validateParams = utils.validateSchema(params, schema.deleteProductSchema);
+    if (validateParams.error) return utils.responseFail(res, validateParams.error);
+    const response = await command.deleteProduct(params);
     return (response.error) ? utils.responseFail(err, response.error) : utils.responseSuccess(res, 200, 'Success Delete Product', response.data)
 }
 
 const deleteProducts = async (req, res) => {
-    const response = await query.deleteProducts();
+    const response = await command.deleteProducts();
     return (response.error) ? utils.responseFail(err, response.error) : utils.responseSuccess(res, 200, 'Success Delete Product', response.data);
 }
 

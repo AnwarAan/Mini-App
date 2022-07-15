@@ -26,8 +26,7 @@ class User {
     async insertOneUser(data) {
         try {
             const newUser = new user(data);
-            const result = newUser.save();
-            console.log('result :', result);
+            const result = await newUser.save();
             return utils.wrapperData(result);
 
         } catch (error) {
@@ -38,7 +37,7 @@ class User {
 
     async updateUser(data, params) {
         try {
-            const result = await user.updateOne(data, params)
+            const result = await user.updateOne(params, data)
             return utils.wrapperData(result);
         } catch (error) {
             console.log(error);

@@ -7,6 +7,31 @@ class CommandProduct {
         this.query = new QueryProduct
     }
 
+    async insertProduct(payload) {
+        const {
+            name,
+            price,
+            rating,
+            tag
+        } = payload;
+
+        const dataProduct = {
+            name: name,
+            price: price,
+            rating: rating,
+            tag: tag
+        }
+
+        const {
+            data,
+            error
+        } = await this.query.product.insertOneProduct(dataProduct);
+        if (error) {
+            return utils.wrapperError(error);
+        }
+        return utils.wrapperData(data);
+    }
+    
     async updateProduct(params, payload) {
         const {
             name,
@@ -14,6 +39,7 @@ class CommandProduct {
             rating,
             tag
         } = payload;
+
         const product = await this.query.getProductById(params);
         if (product.error) {
             return utils.wrapperError(err.notFound('Upload Product Failed'))
@@ -44,7 +70,31 @@ class CommandProduct {
         return utils.wrapperData(renewProduct);
     }
 
+    async deleteProduct(productId) {
+        const param = {
+            _id: productId
+        }
+        
+        const {
+            data,
+            error
+        } = await this.query.product.deleteOneProduct(param);
+        if (error) {
+            return utils.wrapperError(error);
+        }
+        return utils.wrapperData(data);
+    }
 
+    async deleteProducts() {
+        const {
+            data,
+            error
+        } = await this.query.product.deleteManyProduct();
+        if (error) {
+            return utils.wrapperError(error);
+        }
+        return utils.wrapperData(data);
+    }
 }
 
 export default CommandProduct;

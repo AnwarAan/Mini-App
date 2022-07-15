@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import config from './src/config/config.js';
-import userRoutes from './src/routes/users_routes.js'
-import productRoutes from './src/routes/products_router.js'
+import userRouter from './src/routes/users_router.js'
+import productRouter from './src/routes/products_router.js'
 
 
 const app = express();
@@ -15,8 +15,8 @@ const uri = `mongodb+srv://${config.NAME}:${config.PASSWORD}@${config.HOST}`
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true,useUnifiedTopology: true}));
-app.use('/v1/users', userRoutes);
-app.use('/v1/products', productRoutes);
+app.use('/v1/users', userRouter);
+app.use('/v1/products', productRouter);
 
 
 mongoose.connect(uri, {useNewUrlParser: true})
