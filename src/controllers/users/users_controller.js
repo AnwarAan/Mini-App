@@ -27,6 +27,14 @@ const registerUser = async (req, res) => {
     return (response.error) ? utils.responseFail(res, response.error) : utils.responseSuccess(res, 200, 'Success Register', response.data);
 }
 
+const loginUser = async (req, res) => {
+    const payload = req.body;
+    const validatePayload = utils.validateSchema(payload, schema.loginUserSchema);
+    if (validatePayload.error) return utils.responseFail(res, validatePayload.error);
+    const response = await command.loginUser(payload);
+    return (response.error) ? utils.responseFail(res, response.error) : utils.responseSuccess(res, 200, 'Success Login', response.data);
+}
+
 const updateUser = async (req, res) => {
     const params = req.params.userId
     const payload = req.body
@@ -54,6 +62,7 @@ export default {
     getUsers,
     getUserById,
     registerUser,
+    loginUser,
     updateUser,
     deleteUser,
     deleteUsers

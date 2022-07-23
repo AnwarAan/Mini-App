@@ -1,6 +1,8 @@
 import utils from '../../helpers/utils.js';
 import QueryUser from './query_users.js';
+import err from '../../helpers/error.js'
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 class CommandUser {
     constructor() {
@@ -53,6 +55,34 @@ class CommandUser {
             return utils.wrapperError(error);
         }
         return utils.wrapperData(data);
+    }
+
+    async loginUser(payload) {
+        const {
+            email,
+            password
+        } = payload;
+        const checkEmail = await this.query.getUserByEmail(email);
+        if (checkEmail.error) {
+            return utils.wrapperError(err.unauthorized('Email Not Registered'));
+        }
+        const checkPassword = await this.comparePassword(password, checkEmail.data.password);
+        if (!checkPassword) {
+            return utils.wrapperError(err.unauthorized('Password Not Match'));
+        }
+        const data = {
+            _id: checkEmail.data.id
+        }
+        const token = jwt.sign(data, process.env.TOKEN_SECRET, {
+            expiresIn: '1m'
+        });
+        return utils.wrapperData({
+            _id: checkEmail.data.id,
+            name: checkEmail.data.name,
+            email: checkEmail.data.email,
+            age: checkEmail.data.age,
+            token
+        });
     }
 
     async updateUser(params, payload) {
