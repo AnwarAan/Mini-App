@@ -1,53 +1,49 @@
-import User from "../../models/user.js";
+import utils from "../../utils/utils.js";
+import QueryUser from "./query-domain.js";
+import CommadUser from "./command-domain.js";
+
+const query = new QueryUser();
+const command = new CommadUser();
 
 const getUser = async (req, res) => {
-  try {
-    const result = await User.find();
-    console.log(result);
-    const response = {
-      status: true,
-      statusCode: 200,
-      message: "success",
-      data: result,
-    };
-    return res.status(200).json(response);
-  } catch (error) {
-    const response = {
-      status: false,
-      statusCode: 404,
-      message: "not found",
-    };
-    return res.status(404).json(response);
-  }
+  const response = await query.getUsers();
+  return response.error
+    ? utils.responseFail(res, response.error)
+    : utils.responseSuccess(res, 200, "success get users", response.data);
 };
-const getuserById = async (req, res) => {};
+
+const getuserById = async (req, res) => {
+  const params = req.params.userId;
+  const response = await query.getUserById(params);
+  return response.error
+    ? utils.responseFail(res, response.error)
+    : utils.responseSuccess(res, 200, "success get user", response.data);
+};
 const registerUser = async (req, res) => {
-  try {
-    const name = req.body.name;
-    const password = req.body.password;
-    const argument = new User({ name: name, password: password });
-    const result = await argument.save();
-    console.log(result);
-    const response = {
-      status: true,
-      statusCode: 200,
-      message: "success",
-      data: result,
-    };
-    return res.status(201).json(response);
-  } catch (error) {
-    console.log(error);
-    const response = {
-      status: false,
-      statusCode: 500,
-      message: "internal server error",
-    };
-    return res.status(500).json(response);
-  }
+  const payload = req.body;
+  const response = await command.registerUser(payload);
+  return response.error
+    ? utils.responseFail(res, response.error)
+    : utils.responseSuccess(res, 201, "success register user", response.data);
 };
+
 const loginUser = async (req, res) => {};
-const updateUser = async (req, res) => {};
-const deleteUser = async (req, res) => {};
+
+const updateUser = async (req, res) => {
+  const params = req.params.userId;
+  const payload = req.body;
+  const response = await command.updateUser(params, payload);
+  return response.error
+    ? utils.responseFail(res, response.error)
+    : utils.responseSuccess(res, 200, "success update user", response.data);
+};
+const deleteUser = async (req, res) => {
+  const params = req.params.userId;
+  const response = await command.deleteUser(params);
+  return response.error
+    ? utils.responseFail(res, response.error)
+    : utils.responseSuccess(res, 200, "success delete user", response.data);
+};
 const deleteUsers = async (req, res) => {};
 
 export default {
