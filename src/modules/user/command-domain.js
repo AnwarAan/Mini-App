@@ -8,19 +8,27 @@ export default class CommadUser {
     this.query = new QueryUser();
   }
 
-  async registerUser(payload) {
-    const { name, email, password } = payload;
-    const userData = { name: name, email: email, password: password };
-    const saveUser = await this.user.insertOneUser(userData);
-    if (saveUser.error) {
-      return saveUser.error;
+  async registerUser(payload, files) {
+    const { name, email, password, phoneNumber } = payload;
+    const userData = {
+      name: name,
+      email: email,
+      password: password,
+      phone_number: phoneNumber,
+      photo: files,
+    };
+    const { data, error } = await this.user.insertOneUser(userData);
+    console.log(data);
+    if (error) {
+      return utils.wrapperError(error);
     }
-    return utils.wrapperData(saveUser);
+    return utils.wrapperData(data);
   }
 
-  async updateUser(userId, payload) {
+  async updateUser(userId, payload, files) {
     const params = { id: userId };
-    const { name, email, password } = payload;
+    const { name, email, password, phoneNumber } = payload;
+    const photo = files;
     const user = await this.query.getUserById(userId);
     if (user.error) {
       return user.error;
@@ -36,6 +44,12 @@ export default class CommadUser {
     if (userData.password !== password) {
       updateData.password = password;
     }
+    if (userData.phone_number !== phoneNumber) {
+      updateData.phone_number = phoneNumber;
+    }
+    if (userData.photo !== photo) {
+      updateData.photo = photo;
+    }
     const updateUser = await this.user.updateOneUser(params, updateData);
     if (updateUser.error) {
       return updateUser.error;
@@ -46,6 +60,14 @@ export default class CommadUser {
   async deleteUser(userId) {
     const params = { id: userId };
     const { data, error } = await this.user.deleteOneUser(params);
+    if (error) {
+      return utils.wrapperError(error);
+    }
+    return utils.wrapperData(data);
+  }
+
+  async deleteUsers() {
+    const { data, error } = await this.user.deleteManyUser();
     if (error) {
       return utils.wrapperError(error);
     }

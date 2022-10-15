@@ -19,9 +19,11 @@ const getuserById = async (req, res) => {
     ? utils.responseFail(res, response.error)
     : utils.responseSuccess(res, 200, "success get user", response.data);
 };
+
 const registerUser = async (req, res) => {
   const payload = req.body;
-  const response = await command.registerUser(payload);
+  const files = req.file.path;
+  const response = await command.registerUser(payload, files);
   return response.error
     ? utils.responseFail(res, response.error)
     : utils.responseSuccess(res, 201, "success register user", response.data);
@@ -32,7 +34,8 @@ const loginUser = async (req, res) => {};
 const updateUser = async (req, res) => {
   const params = req.params.userId;
   const payload = req.body;
-  const response = await command.updateUser(params, payload);
+  const files = req.file.path;
+  const response = await command.updateUser(params, payload, files);
   return response.error
     ? utils.responseFail(res, response.error)
     : utils.responseSuccess(res, 200, "success update user", response.data);
@@ -44,7 +47,12 @@ const deleteUser = async (req, res) => {
     ? utils.responseFail(res, response.error)
     : utils.responseSuccess(res, 200, "success delete user", response.data);
 };
-const deleteUsers = async (req, res) => {};
+const deleteUsers = async (req, res) => {
+  const response = await command.deleteUsers();
+  return response.error
+    ? utils.responseFail(res, response.error)
+    : utils.responseSuccess(res, 200, "success delete users", response.data);
+};
 
 export default {
   getUser,

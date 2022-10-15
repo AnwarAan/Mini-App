@@ -20,15 +20,15 @@ const responseSuccess = (res, statusCode, message, data) => {
 
 const wrapperData = (data) => {
   return {
-    error: null,
     data,
+    error: null,
   };
 };
 
 const wrapperError = (error) => {
   return {
-    error,
     data: null,
+    error,
   };
 };
 

@@ -1,4 +1,3 @@
-import err from "../../utils/err.js";
 import utils from "../../utils/utils.js";
 import Users from "./repositories.js";
 

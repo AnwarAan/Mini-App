@@ -10,6 +10,12 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
   },
+  phone_number: {
+    type: Number,
+  },
+  photo: {
+    type: String,
+  },
 });
 
 const User = mongoose.model("user", userSchema);
