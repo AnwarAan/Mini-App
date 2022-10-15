@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import utils from "../../utils/utils.js";
 import Users from "./repositories.js";
 import QueryUser from "./query-domain.js";
@@ -20,9 +21,7 @@ export default class CommadUser {
       photo: files,
     };
     const { data, error } = await this.user.insertOneUser(userData);
-    if (error) {
-      return utils.wrapperError(error);
-    }
+    if (error) return utils.wrapperError(error);
     return utils.wrapperData(data);
   }
 
@@ -36,10 +35,13 @@ export default class CommadUser {
     if (checkPwd.error) {
       return checkPwd.error;
     }
+    const data = { _id: checkUser.data.id };
+    const token = jwt.sign(data, process.env.SECRET_KEY, { expiresIn: "24h" });
     const userData = {
       _id: checkUser.data.id,
       name: checkUser.data.name,
       email: checkUser.data.email,
+      token,
     };
     return utils.wrapperData(userData);
   }

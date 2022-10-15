@@ -12,6 +12,13 @@ const unauthorized = (message = "Unauthorized") => {
   };
 };
 
+const forbidden = (message = "Forbidden") => {
+  return {
+    code: 403,
+    message,
+  };
+};
+
 const notFoud = (message = "Not Found") => {
   return {
     code: 404,
@@ -29,6 +36,7 @@ const internalServerError = (message = "Internal Server Error") => {
 const err = {
   badRequest,
   unauthorized,
+  forbidden,
   notFoud,
   internalServerError,
 };
