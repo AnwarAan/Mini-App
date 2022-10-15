@@ -29,7 +29,13 @@ const registerUser = async (req, res) => {
     : utils.responseSuccess(res, 201, "success register user", response.data);
 };
 
-const loginUser = async (req, res) => {};
+const loginUser = async (req, res) => {
+  const payload = req.body;
+  const response = await command.loginUser(payload);
+  return response.error
+    ? utils.responseFail(res, response.error)
+    : utils.responseSuccess(res, 200, "success login user", response.data);
+};
 
 const updateUser = async (req, res) => {
   const params = req.params.userId;

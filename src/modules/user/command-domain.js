@@ -1,6 +1,7 @@
 import utils from "../../utils/utils.js";
 import Users from "./repositories.js";
 import QueryUser from "./query-domain.js";
+import hash from "../../helpers/hash.js";
 
 export default class CommadUser {
   constructor() {
@@ -10,19 +11,37 @@ export default class CommadUser {
 
   async registerUser(payload, files) {
     const { name, email, password, phoneNumber } = payload;
+    const pwd = await hash.encrypt(password);
     const userData = {
       name: name,
       email: email,
-      password: password,
+      password: pwd,
       phone_number: phoneNumber,
       photo: files,
     };
     const { data, error } = await this.user.insertOneUser(userData);
-    console.log(data);
     if (error) {
       return utils.wrapperError(error);
     }
     return utils.wrapperData(data);
+  }
+
+  async loginUser(payload) {
+    const { email, password } = payload;
+    const checkUser = await this.query.getUserByEmail(email);
+    if (checkUser.error) {
+      return checkUser.error;
+    }
+    const checkPwd = await hash.decrypt(password, checkUser.data.password);
+    if (checkPwd.error) {
+      return checkPwd.error;
+    }
+    const userData = {
+      _id: checkUser.data.id,
+      name: checkUser.data.name,
+      email: checkUser.data.email,
+    };
+    return utils.wrapperData(userData);
   }
 
   async updateUser(userId, payload, files) {

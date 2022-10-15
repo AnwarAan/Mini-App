@@ -1,3 +1,4 @@
+import err from "../../utils/err.js";
 import utils from "../../utils/utils.js";
 import Users from "./repositories.js";
 
@@ -16,6 +17,15 @@ export default class QueryUser {
 
   async getUserById(userId) {
     const params = { id: userId };
+    const { data, error } = await this.user.getOneUser(params);
+    if (error) {
+      return utils.wrapperError(error);
+    }
+    return utils.wrapperData(data);
+  }
+
+  async getUserByEmail(userEmail) {
+    const params = { email: userEmail };
     const { data, error } = await this.user.getOneUser(params);
     if (error) {
       return utils.wrapperError(error);
