@@ -3,7 +3,7 @@ import utils from "../../utils/utils.js";
 import err from "../../utils/err.js";
 
 export default class Users {
-  async getOneUser(params) {
+  async findOneUser(params) {
     try {
       const result = await User.findOne(params);
       return utils.wrapperData(result);
@@ -12,7 +12,7 @@ export default class Users {
     }
   }
 
-  async getManyUser() {
+  async findManyUser() {
     try {
       const result = await User.find();
       return utils.wrapperData(result);

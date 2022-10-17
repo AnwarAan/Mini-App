@@ -17,7 +17,7 @@ const jwtAuth = async (req, res, next) => {
         return utils.responseFail(res, err.forbidden("invalid token"));
       }
       console.log("log", token);
-      const userData = await user.getOneUser({ _id: decode._id });
+      const userData = await user.findOneUser({ _id: decode._id });
       if (userData.data) {
         req.userId = decode._id;
         return next();

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import utils from "../../utils/utils.js";
+import err from "../../utils/err.js";
 import Users from "./repositories.js";
 import QueryUser from "./query-domain.js";
 import hash from "../../helpers/hash.js";
@@ -12,6 +13,9 @@ export default class CommadUser {
 
   async registerUser(payload, files) {
     const { name, email, password, phoneNumber } = payload;
+    const checkEmail = await this.query.getUserByEmail(email);
+    if (checkEmail.data != null) return utils.wrapperError(err.forbidden("email has already"));
+    if (checkEmail.error) return checkEmail.error;
     const pwd = await hash.encrypt(password);
     const userData = {
       name: name,
@@ -28,13 +32,10 @@ export default class CommadUser {
   async loginUser(payload) {
     const { email, password } = payload;
     const checkUser = await this.query.getUserByEmail(email);
-    if (checkUser.error) {
-      return checkUser.error;
-    }
+    if (checkUser.data === null) return utils.wrapperError(err.notFoud("email not registered"));
+    if (checkUser.error) return checkUser.error;
     const checkPwd = await hash.decrypt(password, checkUser.data.password);
-    if (checkPwd.error) {
-      return checkPwd.error;
-    }
+    if (!checkPwd) return utils.wrapperError(err.unauthorized("password not match"));
     const data = { _id: checkUser.data.id };
     const token = jwt.sign(data, process.env.SECRET_KEY, { expiresIn: "24h" });
     const userData = {
@@ -51,9 +52,7 @@ export default class CommadUser {
     const { name, email, password, phoneNumber } = payload;
     const photo = files;
     const user = await this.query.getUserById(userId);
-    if (user.error) {
-      return user.error;
-    }
+    if (user.error) return user.error;
     const userData = user.data;
     let updateData = {};
     if (userData.name !== name) {
@@ -72,26 +71,20 @@ export default class CommadUser {
       updateData.photo = photo;
     }
     const updateUser = await this.user.updateOneUser(params, updateData);
-    if (updateUser.error) {
-      return updateUser.error;
-    }
+    if (updateUser.error) return updateUser.error;
     return utils.wrapperData(updateData);
   }
 
   async deleteUser(userId) {
     const params = { id: userId };
     const { data, error } = await this.user.deleteOneUser(params);
-    if (error) {
-      return utils.wrapperError(error);
-    }
+    if (error) return utils.wrapperError(error);
     return utils.wrapperData(data);
   }
 
   async deleteUsers() {
     const { data, error } = await this.user.deleteManyUser();
-    if (error) {
-      return utils.wrapperError(error);
-    }
+    if (error) return utils.wrapperError(error);
     return utils.wrapperData(data);
   }
 }
