@@ -6,11 +6,20 @@ import CommadUser from "./command-domain.js";
 const query = new QueryUser();
 const command = new CommadUser();
 
-const getUser = async (req, res) => {
+const getUsers = async (req, res) => {
   const response = await query.getUsers();
   return response.error
     ? utils.responseFail(res, response.error)
     : utils.responseSuccess(res, response, "success get user");
+};
+
+const getUserPagination = async (req, res) => {
+  const { page, limit } = req.query;
+  const payload = { page: parseInt(page) || 1, limit: parseInt(limit) || 10 };
+  const response = await query.getUserPagination(payload);
+  return response.error
+    ? utils.responseFail(res, response.error)
+    : utils.responseSuccessPagination(res, response, "success get user");
 };
 
 const getuserById = async (req, res) => {
@@ -74,7 +83,8 @@ const deleteUsers = async (req, res) => {
 };
 
 export default {
-  getUser,
+  getUsers,
+  getUserPagination,
   getuserById,
   registerUser,
   loginUser,

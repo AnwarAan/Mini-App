@@ -14,10 +14,20 @@ export default class Users {
 
   async findManyUser() {
     try {
-      const result = await User.find();
+      const result = await User.find().skip();
       return utils.wrapperData(result);
     } catch (error) {
       return utils.wrapperError(err.notFoud("user not found"));
+    }
+  }
+
+  async findAndCountAllUser(pages, limit) {
+    try {
+      const count = await User.find().count();
+      const result = await User.find().skip(pages).limit(limit);
+      return utils.wrapperData({ result, count });
+    } catch (error) {
+      return utils.wrapperError(error);
     }
   }
 

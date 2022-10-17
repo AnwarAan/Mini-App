@@ -6,12 +6,13 @@ import upload from "../helpers/multipart.js";
 
 const router = Router();
 
-router.get("/", basicAuth, apiHandler.getUser);
+router.get("/", basicAuth, apiHandler.getUsers);
+router.get("/page", basicAuth, apiHandler.getUserPagination);
 router.get("/:userId", basicAuth, apiHandler.getuserById);
 router.post("/register", upload.single("photo"), basicAuth, apiHandler.registerUser);
 router.post("/login", basicAuth, apiHandler.loginUser);
 router.put("/:userId", upload.single("photo"), jwtAuth, apiHandler.updateUser);
 router.delete("/:userId", jwtAuth, apiHandler.deleteUser);
-router.delete("/", apiHandler.deleteUsers);
+router.delete("/", basicAuth, apiHandler.deleteUsers);
 
 export default router;

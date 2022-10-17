@@ -20,10 +20,22 @@ const responseSuccess = (res, result, message = "success", statusCode = 200) => 
   return res.status(statusCode).json(response);
 };
 
-const wrapperData = (data) => {
+const responseSuccessPagination = (res, result, message = "success", statusCode = 200) => {
+  const response = {
+    status: true,
+    statusCode,
+    message,
+    data: result.data,
+    meta: result.meta,
+  };
+  return res.status(statusCode).json(response);
+};
+
+const wrapperData = (data, meta) => {
   return {
     data,
     error: null,
+    meta,
   };
 };
 
@@ -43,6 +55,7 @@ const validateSchema = (payload, schema) => {
 export default {
   responseFail,
   responseSuccess,
+  responseSuccessPagination,
   wrapperData,
   wrapperError,
   validateSchema,
