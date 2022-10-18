@@ -9,9 +9,9 @@ const router = Router();
 router.get("/", basicAuth, apiHandler.getUsers);
 router.get("/page", basicAuth, apiHandler.getUserPagination);
 router.get("/:userId", basicAuth, apiHandler.getuserById);
-router.post("/register", upload.single("photo"), basicAuth, apiHandler.registerUser);
+router.post("/register", basicAuth, upload, apiHandler.registerUser);
 router.post("/login", basicAuth, apiHandler.loginUser);
-router.put("/:userId", upload.single("photo"), jwtAuth, apiHandler.updateUser);
+router.put("/:userId", jwtAuth, upload, apiHandler.updateUser);
 router.delete("/:userId", jwtAuth, apiHandler.deleteUser);
 router.delete("/", basicAuth, apiHandler.deleteUsers);
 
