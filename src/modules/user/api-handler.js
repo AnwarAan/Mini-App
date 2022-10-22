@@ -1,8 +1,14 @@
+import formidable from "formidable";
 import utils from "../../utils/utils.js";
 import schema from "./model-handler.js";
 import QueryUser from "./query-domain.js";
 import CommadUser from "./command-domain.js";
 
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const query = new QueryUser();
 const command = new CommadUser();
 
@@ -32,15 +38,29 @@ const getuserById = async (req, res) => {
     : utils.responseSuccess(res, response, "success get user");
 };
 
-const registerUser = async (req, res) => {
-  const payload = req.body;
-  const files = req.file.path;
-  const validatePayload = utils.validateSchema(payload, schema.registerUserSchema);
-  if (validatePayload.error) return utils.responseFail(res, validatePayload.error);
-  const response = await command.registerUser(payload, files);
-  return response.error
-    ? utils.responseFail(res, response.error)
-    : utils.responseSuccess(res, response, "success register user", 201);
+const registerUser = async (req, res, next) => {
+  const form = new formidable.IncomingForm();
+  const dirFile = path.join(__dirname + "../../../../assets");
+  form.multiples = true;
+  form.uploadDir = dirFile;
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      next(err);
+      return;
+    }
+    const oldPath = files.photo.filepath;
+    const newPath = path.join(__dirname + "../../../../assets", files.photo.originalFilename);
+    fs.rename(oldPath, newPath, (err) => {
+      console.log(err);
+    });
+    const payload = { ...fields, photo: files.photo.filepath + "-" + files.photo.originalFilename };
+    const validatePayload = utils.validateSchema(payload, schema.registerUserSchema);
+    if (validatePayload.error) return utils.responseFail(res, validatePayload.error);
+    const response = await command.registerUser(payload);
+    return response.error
+      ? utils.responseFail(res, response.error)
+      : utils.responseSuccess(res, response, "success register user", 201);
+  });
 };
 
 const loginUser = async (req, res) => {
@@ -53,18 +73,32 @@ const loginUser = async (req, res) => {
     : utils.responseSuccess(res, response, "success login user");
 };
 
-const updateUser = async (req, res) => {
-  const params = req.params.userId;
-  const payload = req.body;
-  const files = req.file.path;
-  const validateParams = utils.validateSchema(params, schema.getUserIdSchema);
-  if (validateParams.error) return utils.responseFail(res, validateParams.error);
-  const validatePayload = utils.validateSchema(payload, schema.updateUserSchema);
-  if (validatePayload.error) return utils.responseFail(res, validatePayload.error);
-  const response = await command.updateUser(params, payload, files);
-  return response.error
-    ? utils.responseFail(res, response.error)
-    : utils.responseSuccess(res, response, "success update user");
+const updateUser = async (req, res, next) => {
+  const form = new formidable.IncomingForm();
+  const dirFile = path.join(__dirname + "../../../../assets");
+  form.multiples = true;
+  form.uploadDir = dirFile;
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      next(err);
+      return;
+    }
+    const oldPath = files.photo.filepath;
+    const newPath = path.join(__dirname, "../../../assets", files.photo.originalFilename);
+    fs.rename(oldPath, newPath, (err) => {
+      console.log(err);
+    });
+    const payload = { ...fields, photo: files.photo.filepath + "-" + files.photo.originalFilename };
+    const params = req.params.userId;
+    const validateParams = utils.validateSchema(params, schema.getUserIdSchema);
+    if (validateParams.error) return utils.responseFail(res, validateParams.error);
+    const validatePayload = utils.validateSchema(payload, schema.updateUserSchema);
+    if (validatePayload.error) return utils.responseFail(res, validatePayload.error);
+    const response = await command.updateUser(params, payload, files);
+    return response.error
+      ? utils.responseFail(res, response.error)
+      : utils.responseSuccess(res, response, "success update user");
+  });
 };
 const deleteUser = async (req, res) => {
   const params = req.params.userId;

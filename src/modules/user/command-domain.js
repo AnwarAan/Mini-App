@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
 import utils from "../../utils/utils.js";
 import err from "../../utils/err.js";
+import hash from "../../helpers/hash.js";
 import Users from "./repositories.js";
 import QueryUser from "./query-domain.js";
-import hash from "../../helpers/hash.js";
 
 export default class CommadUser {
   constructor() {
@@ -11,8 +11,8 @@ export default class CommadUser {
     this.query = new QueryUser();
   }
 
-  async registerUser(payload, files) {
-    const { name, email, password, phoneNumber } = payload;
+  async registerUser(payload) {
+    const { name, email, password, phoneNumber, photo } = payload;
     const checkEmail = await this.query.getUserByEmail(email);
     if (checkEmail.data != null) return utils.wrapperError(err.forbidden("email has already"));
     if (checkEmail.error) return checkEmail.error;
@@ -22,7 +22,7 @@ export default class CommadUser {
       email: email,
       password: pwd,
       phone_number: phoneNumber,
-      photo: files,
+      photo: photo,
     };
     const { data, error } = await this.user.insertOneUser(userData);
     if (error) return utils.wrapperError(error);
@@ -47,10 +47,9 @@ export default class CommadUser {
     return utils.wrapperData(userData);
   }
 
-  async updateUser(userId, payload, files) {
+  async updateUser(userId, payload) {
     const params = { id: userId };
-    const { name, email, password, phoneNumber } = payload;
-    const photo = files;
+    const { name, email, password, phoneNumber, photo } = payload;
     const user = await this.query.getUserById(userId);
     if (user.error) return user.error;
     const userData = user.data;
