@@ -1,9 +1,12 @@
+import fs from "fs";
 import jwt from "jsonwebtoken";
 import utils from "../../utils/utils.js";
 import err from "../../utils/err.js";
 import hash from "../../helpers/hash.js";
 import Users from "./repositories.js";
 import QueryUser from "./query-domain.js";
+import mailer from "../../helpers/mailer.js";
+import mustache from "mustache";
 
 export default class CommadUser {
   constructor() {
@@ -72,6 +75,27 @@ export default class CommadUser {
     const updateUser = await this.user.updateOneUser(params, updateData);
     if (updateUser.error) return updateUser.error;
     return utils.wrapperData(updateData);
+  }
+
+  async resetPassword(email) {
+    const getUser = await this.query.getUserByEmail(email);
+    if (getUser.data === null) return utils.wrapperError(err.unauthorized("email not registered"));
+    const userEmail = getUser.data.email;
+    const token = await hash.encrypt(getUser.data.id);
+    const link = `v1/user/reset-password?userId${token}`;
+    const tmp = fs.readFileSync("./src/helpers/templates/reset-password.html", "utf8");
+    const body = mustache.render(tmp, { link });
+    const mailOpt = {
+      from: "anwaraan998@gmail.com",
+      to: userEmail,
+      subject: "reset password",
+      html: body,
+    };
+    mailer.sendMail(mailOpt, (error, data) => {
+      if (error) return utils.wrapperError(err.internalServerError("failed sent mail"));
+      console.log(data.messageId);
+    });
+    return utils.wrapperData("link reset password has been sent to email");
   }
 
   async deleteUser(userId) {

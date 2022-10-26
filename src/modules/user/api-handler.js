@@ -100,6 +100,15 @@ const updateUser = async (req, res, next) => {
       : utils.responseSuccess(res, response, "success update user");
   });
 };
+
+const resetPassword = async (req, res) => {
+  const email = req.body.email;
+  const response = await command.resetPassword(email);
+  return response.error
+    ? utils.responseFail(res, response.error)
+    : utils.responseSuccess(res, response);
+};
+
 const deleteUser = async (req, res) => {
   const params = req.params.userId;
   const validateParams = utils.validateSchema(params, schema.getUserIdSchema);
@@ -109,6 +118,7 @@ const deleteUser = async (req, res) => {
     ? utils.responseFail(res, response.error)
     : utils.responseSuccess(res, response, "success delete user");
 };
+
 const deleteUsers = async (req, res) => {
   const response = await command.deleteUsers();
   return response.error
@@ -123,6 +133,7 @@ export default {
   registerUser,
   loginUser,
   updateUser,
+  resetPassword,
   deleteUser,
   deleteUsers,
 };
