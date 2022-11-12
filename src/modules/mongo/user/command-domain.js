@@ -1,11 +1,11 @@
 import fs from "fs";
 import jwt from "jsonwebtoken";
-import utils from "../../utils/utils.js";
-import err from "../../utils/err.js";
-import hash from "../../helpers/hash.js";
-import Users from "./repositories.js";
+import utils from "../../../utils/utils.js";
+import err from "../../../utils/err.js";
+import hash from "../../../helpers/hash.js";
+import mailer from "../../../helpers/mailer.js";
 import QueryUser from "./query-domain.js";
-import mailer from "../../helpers/mailer.js";
+import Users from "./repositories.js";
 import mustache from "mustache";
 
 export default class CommadUser {

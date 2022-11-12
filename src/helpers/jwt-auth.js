@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import err from "../utils/err.js";
 import utils from "../utils/utils.js";
-import Users from "../modules/user/repositories.js";
+import Users from "../modules/mongo/user/repositories.js";
 
 const user = new Users();
 const jwtAuth = async (req, res, next) => {

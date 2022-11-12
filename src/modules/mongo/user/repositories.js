@@ -1,6 +1,6 @@
-import User from "../../models/user.js";
-import utils from "../../utils/utils.js";
-import err from "../../utils/err.js";
+import User from "../../../models/mongo/user.js";
+import utils from "../../../utils/utils.js";
+import err from "../../../utils/err.js";
 
 export default class Users {
   async findOneUser(params) {

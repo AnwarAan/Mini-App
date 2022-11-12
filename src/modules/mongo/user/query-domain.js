@@ -1,4 +1,4 @@
-import utils from "../../utils/utils.js";
+import utils from "../../../utils/utils.js";
 import Users from "./repositories.js";
 
 export default class QueryUser {
