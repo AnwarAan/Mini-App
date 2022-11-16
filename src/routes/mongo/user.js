@@ -1,7 +1,7 @@
 import { Router } from "express";
-import apiHandler from "../modules/mongo/user/api-handler.js";
-import basicAuth from "../helpers/basic-auth.js";
-import jwtAuth from "../helpers/jwt-auth.js";
+import apiHandler from "../../modules/mongo/user/api-handler.js";
+import basicAuth from "../../helpers/basic-auth.js";
+import jwtAuth from "../../helpers/jwt-auth.js";
 
 const router = Router();
 
